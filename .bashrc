@@ -8,12 +8,12 @@ export CURL_CA_BUNDLE=~/ball_pem_builder/Ball.pem
 export REQUESTS_CA_BUNDLE=~/ball_pem_builder/Ball.pem
 export DOCKER_BUILDKIT=0
 
-export GITLAB_CREDS="laptop:E5VzVp3VpPyHrNzKytdQ"
+export GITLAB_CREDS="desktop:ckyt2w426yxeHKxwesFs"
 export CI_SERVER_HOST="gitlab.aero.ball.com"
 
 # WSL on Global Protect
 #wsl.exe -d wsl-vpnkit service wsl-vpnkit start
-echo "Remember to run: sudo /home/dave/wsl-vpnkit"
+#echo "Remember to run: sudo /home/dave/wsl-vpnkit"
 
 # Start in home directory
 cd ~
@@ -33,7 +33,7 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
+HISTSIZE=10000
 HISTFILESIZE=80000
 
 # check the window size after each command and, if necessary,
@@ -61,6 +61,14 @@ esac
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
 #force_color_prompt=yes
+# Otherwise define some colors:
+red='\e[0;31m'
+RED='\e[1;31m'
+blue='\e[0;34m'
+BLUE='\e[1;34m'
+cyan='\e[0;36m'
+CYAN='\e[1;36m'
+NC='\e[0m'              # No Color
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -89,12 +97,19 @@ xterm*|rxvt*)
     ;;
 esac
 
+# Set different color for a remote terminal
+if [[ "${DISPLAY#$HOST}" != ":0.0" &&  "${DISPLAY}" != ":0" ]]; then  
+    HILIT=${red}   # remote machine: prompt will be partly red
+else
+    HILIT=${cyan}  # local machine: prompt will be partly cyan
+fi
+
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
@@ -107,6 +122,8 @@ fi
 
 # kubernetes auto complete
 source <(kubectl completion bash)
+alias k=kubectl
+complete -o default -F __start_kubectl k
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -128,9 +145,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Add new version of go to path
-PATH=$PATH:/usr/local/go/bin/
-PATH=$PATH:~/playpen/vcpkg/
 
 # Now have some fun
 #
@@ -156,7 +170,7 @@ function dockersize() {
 # Find a file with a pattern in name:
 function ff() { 
     echo "$*"
-    find . -type f -iname '*'"$*"'*' -ls ; 
+    find . -type f -iname '*'"$*"'*' -ls 2>&- ; 
 }
 
 function fer() {
@@ -178,6 +192,11 @@ function findgrep(){
     echo "Remember, do not use wildcards in filename. Automatically added";
     echo "Finding '$1' in '*$2'";
     grep "$1" `find . -type f -iname '*'"$2"`;
+}
+
+function histsearch(){
+    echo "Looking for $1 in history";
+    history | grep "$1";
 }
 
 # Remove matching file
@@ -227,6 +246,20 @@ function ask()          # See 'killps' for example of use.
     esac
 }
 
+function ii()   # get current host related info
+{
+    echo -e "\nYou are logged on ${RED}$HOST"
+    echo -e "\nAdditionnal information:$NC " ; uname -a
+    echo -e "\n${RED}Users logged on:$NC " ; w -h
+    echo -e "\n${RED}Current date :$NC " ; date
+    echo -e "\n${RED}Machine stats :$NC " ; uptime
+    echo -e "\n${RED}Memory stats :$NC " ; free
+    my_ip 2>&- ;
+    echo -e "\n${RED}Local IP Address :$NC" ; echo ${MY_IP:-"Not connected"}
+    echo -e "\n${RED}ISP Address :$NC" ; echo ${MY_ISP:-"Not connected"}
+    echo
+}
+
 #conversions
 # converts decimal to binary
 function dtb() { 
@@ -270,4 +303,27 @@ function htd() {
 complete -C /usr/local/bin/terraform terraform
 
 
-source <(kubectl completion bash)
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/dave/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/dave/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/dave/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/dave/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+# Set up vcpkg
+VCPKG_ROOT=/home/dave/playpen/vcpkg/vcpkg/
+export PATH="$PATH:/home/dave/playpen/vcpkg/vcpkg/"
+
+
+# setup GOlang
+export PATH=$PATH:/usr/local/go/bin
+
