@@ -8,7 +8,7 @@ export CURL_CA_BUNDLE=~/ball_pem_builder/Ball.pem
 export REQUESTS_CA_BUNDLE=~/ball_pem_builder/Ball.pem
 export DOCKER_BUILDKIT=0
 
-export GITLAB_CREDS="desktop:ckyt2w426yxeHKxwesFs"
+source ~/.tokens
 export CI_SERVER_HOST="gitlab.aero.ball.com"
 
 # WSL on Global Protect
