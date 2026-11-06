@@ -1,0 +1,27 @@
+# File for extra aliases and only aliases
+
+# common ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Always perserve when copying, why isn't this the default?
+alias cp='cp -p'
+
+# Docker
+
+# Hunt the whale and kill it all
+alias ahab='docker ps -a | grep -v CONTAINER | awk '\''{print $1}'\'' | xargs docker stop | xargs docker rm; docker volume ls -qf dangling=true | xargs docker volume rm | docker system prune -af'
+
+alias ahabpod="podman ps -a | grep -v CONTAINER | awk '{print $1}' | xargs podman stop | xargs podman rm; podman volume ls -qf dangling=true | xargs podman volume rm -a | podman system prune -af | podman network ls -nq | grep -q podman | xargs podman network rm"
+
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Kubectl
+alias k=kubectl
+
+# SciTec wants rm -i which is super annoying
+unalias rm

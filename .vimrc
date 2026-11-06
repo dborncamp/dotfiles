@@ -1,6 +1,6 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required for Vundle
-set columns=80
+"set columns=80
 set scrolloff=2
 set ul=200
 set autoindent
@@ -22,13 +22,17 @@ set directory=~/.vim_backup,.
 set writebackup
 set viminfo='100 "keep history of 100
 set history=100
-set columns=80
 "set tabbing and formatting options
 set tabstop=4
 set softtabstop=4
 set fileformat=unix
 set encoding=utf-8
 set clipboard=unnamed  "allow Copy-Paste
+
+" Remove problem of adding characters in an unsupported terminal like RHEL's
+" built in one
+set keyprotocol=
+let &term=&term
 
 "javascript only wants 2 spaces per tab
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
@@ -58,7 +62,6 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'pineapplegiant/spaceduck'
-Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 "Plugin 'trusktr/seti.vim'
 Plugin 'ryanoasis/vim-devicons'
@@ -100,14 +103,13 @@ set hidden
 set autoindent
 
 " YCM. Use a venv for auto completion
-let g:ycm_python_interpreter_path = ''
+let g:ycm_python_interpreter_path = '/usr/bin/python3.12'
 let g:ycm_python_sys_path = []
 let g:ycm_extra_conf_vim_data = [
   \  'g:ycm_python_interpreter_path',
   \  'g:ycm_python_sys_path'
   \]
 let g:ycm_global_ycm_extra_conf = '~/global_extra_conf.py'
-
 
 "vim-buffet
 nmap <leader>1 <Plug>BuffetSwitch(1)
@@ -133,6 +135,17 @@ nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
+" Use ctrl-[hjkl] to select the active split!
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
+" Start NERDTree and put the cursor back in the other window.
+autocmd VimEnter * NERDTree | wincmd p
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+let g:NERDTreeFileLines = 1
+let g:NERDTreeShowHidden = 1
 
 "Set the font
 "set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
@@ -143,7 +156,27 @@ set encoding=UTF-8
 
 
 "Airline
+"let g:airline_powerline_fonts = 1
+" air-line
 let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
 
 
 "set up simply fold 
@@ -162,4 +195,3 @@ let g:pymode_lint_checker = "pyflakes"
 " Auto check on save
 let g:pymode_lint_write = 1
 let g:PyFlakeOnWrite = 1
-

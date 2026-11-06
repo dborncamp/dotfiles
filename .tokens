@@ -1,0 +1,14 @@
+export GITLAB_TOKEN_TITLE="<title>"
+export GITLAB_TOKEN="<Personal Access Token>"
+
+export GITLAB_CREDS="${GITLAB_TOKEN_TITLE}:${GITLAB_TOKEN}"
+
+export ARTIFACTORY_USERNAME=<username>
+export ARTIFACTORY_ACCESS_TOKEN=<set me up token>
+export ARTIFACTORY_API_KEY=$ARTIFACTORY_ACCESS_TOKEN
+
+export JIRA_TOKEN_TITLE="<title>"
+export JIRA_TOKEN="<token>"
+
+export JIRA_CREDS="{$JIRA_TOKEN_TITLE}:${JIRA_TOKEN}"
+
